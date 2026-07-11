@@ -1,5 +1,5 @@
 // Central API service — all backend calls go through here
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+const API_BASE = 'https://onerepo.fly.dev/api';
 
 function getToken() {
   return localStorage.getItem('token');
