@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html {
+    scroll-behavior: smooth;
+    overflow-x: hidden; /* prevent any child from causing horizontal scroll */
+    max-width: 100vw;
+  }
+  body { 
+    font-family: 'Inter', -apple-system, "Segoe UI", Roboto, sans-serif; 
+    background: #1a1a1a; 
+    color: #fff; 
+    -webkit-font-smoothing: antialiased; 
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  h1 {
+    font-size: 2.25rem; /* 36px mobile */
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  @media (min-width: 1024px) {
+    h1 {
+      font-size: 3.5rem; /* 56px desktop */
+    }
+  }
+  h2 {
+    font-size: 1.75rem; /* 28px mobile */
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+  }
+  @media (min-width: 1024px) {
+    h2 {
+      font-size: 2.25rem; /* 36px desktop */
+    }
+  }
+  h3 {
+    font-size: 1.25rem; /* 20px mobile */
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  @media (min-width: 1024px) {
+    h3 {
+      font-size: 1.5rem; /* 24px desktop */
+    }
+  }
+  a { text-decoration: none; color: inherit; }
+}
+
+@layer utilities {
+  .ticker-track { display: flex; width: max-content; animation: ticker 40s linear infinite; }
+  .ticker-track:hover { animation-play-state: paused; }
+
+  /* Blob shapes behind illustrations */
+  .blob {
+    border-radius: 60% 40% 70% 30% / 50% 60% 40% 60%;
+    background: #3d1a10;
+  }
+
+  /* Vertical text for blog category labels */
+  .vertical-text {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    letter-spacing: 0.15em;
+  }
+
+  /* Custom scrollbar — page-level only (html element) */
+  html::-webkit-scrollbar { width: 6px; }
+  html::-webkit-scrollbar-track { background: #1a1a1a; }
+  html::-webkit-scrollbar-thumb { background: #f04e23; border-radius: 3px; }
+
+  /* Utility: completely hide scrollbar on inner scroll containers */
+  .scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+
+  /* Dropdown animation */
+  .dropdown-enter { opacity: 0; transform: translateY(-8px); transition: all 0.2s ease; }
+  .dropdown-active { opacity: 1; transform: translateY(0); }
+
+  @keyframes ticker-scroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+}
