@@ -1,6 +1,7 @@
 import { Router, Response } from 'express';
 import prisma from '../lib/prisma';
 import { authenticateToken, AuthRequest } from '../middleware/auth.middleware';
+import { EmailService } from '../lib/email';
 
 const router = Router();
 
@@ -272,6 +273,16 @@ router.post('/transactions/:id/approve', async (req, res) => {
       ]);
     } else if (tx.type === 'WITHDRAWAL') {
       await prisma.transaction.update({ where: { id: tx.id }, data: { status: 'COMPLETED', reviewedAt: new Date() } });
+    }
+
+    // Send email alert
+    const user = await prisma.user.findUnique({ where: { id: tx.userId } });
+    if (user) {
+      if (tx.type === 'DEPOSIT') {
+        EmailService.sendDepositApprovedAlert(user.email, user.firstName, tx.amount, 'USD');
+      } else if (tx.type === 'WITHDRAWAL') {
+        EmailService.sendWithdrawalApprovedAlert(user.email, user.firstName, tx.amount, 'USD');
+      }
     }
 
     res.json({ success: true });

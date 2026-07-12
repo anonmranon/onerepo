@@ -2,6 +2,7 @@ import express from 'express';
 import { prisma } from '../lib/prisma';
 import { authenticateToken, AuthRequest } from '../middleware/auth.middleware';
 import { Response } from 'express';
+import { EmailService } from '../lib/email';
 
 const router = express.Router();
 router.use(authenticateToken);
@@ -48,6 +49,13 @@ router.post('/deposit', async (req: AuthRequest, res: Response): Promise<any> =>
         status: 'PENDING',
       }
     });
+
+    // Send email alert
+    const user = await prisma.user.findUnique({ where: { id: req.user!.id } });
+    if (user) {
+      EmailService.sendDepositRequestAlert(user.email, user.firstName, parseFloat(amount), 'USD');
+    }
+
     res.json(tx);
   } catch (error) {
     res.status(500).json({ error: 'Failed to initiate deposit' });
@@ -83,6 +91,9 @@ router.post('/withdraw', async (req: AuthRequest, res: Response): Promise<any> =
       }
     });
     
+    // Send email alert
+    EmailService.sendWithdrawalRequestAlert(user.email, user.firstName, parseFloat(amount), 'USD');
+
     res.json(tx);
   } catch (error) {
     res.status(500).json({ error: 'Failed to initiate withdrawal' });

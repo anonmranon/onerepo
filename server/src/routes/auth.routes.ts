@@ -2,6 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import prisma from '../lib/prisma';
+import { EmailService } from '../lib/email';
 
 const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-jwt-key-change-in-production';
@@ -48,6 +49,9 @@ router.post('/register', async (req, res) => {
     // Generate JWT
     const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '1d' });
 
+    // Send welcome email (asynchronous)
+    EmailService.sendWelcomeEmail(user.email, user.firstName);
+
     res.status(201).json({
       message: 'User registered successfully',
       token,
@@ -92,6 +96,9 @@ router.post('/login', async (req, res) => {
 
     // Generate JWT
     const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '1d' });
+
+    // Send login alert (asynchronous)
+    EmailService.sendLoginAlert(user.email, user.firstName, req.ip);
 
     res.json({
       message: 'Login successful',
