@@ -123,7 +123,7 @@ export default function DashboardTrading() {
     const fetchPrices = async () => {
       try {
         const res = await fetch(
-          `https://api.coingecko.com/api/v3/simple/price?ids=${cryptoIds}&vs_currencies=usd&x_cg_demo_api_key=${import.meta.env.VITE_COINGECKO_API_KEY}`
+          `https://api.coingecko.com/api/v3/simple/price?ids=${cryptoIds}&vs_currencies=usd&x_cg_demo_api_key=CG-WAubejf1BsCA9U4xqM9H4WZP`
         );
         const data = await res.json();
         const mapped = {};

@@ -13,7 +13,7 @@ const COINS = [
 
 const COIN_IDS = COINS.map(c => c.id).join(',');
 const ENDPOINT = `https://api.coingecko.com/api/v3/simple/price?ids=${COIN_IDS}&vs_currencies=usd&include_24hr_change=true`;
-const API_KEY = import.meta.env.VITE_COINGECKO_API_KEY;
+const API_KEY = 'CG-WAubejf1BsCA9U4xqM9H4WZP';
 
 function fmt(price) {
   if (price >= 1000) return price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
