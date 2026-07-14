@@ -124,24 +124,24 @@ router.patch('/users/:id/role', async (req, res) => {
 // ── Admin: Credit / Debit wallet balance ──────────────────
 router.post('/users/:id/wallet/credit', async (req: AuthRequest, res: Response) => {
   try {
+    const uid = String(req.params.id);
     const { amount, note } = req.body;
     const parsedAmount = parseFloat(amount);
     if (!parsedAmount || parsedAmount <= 0) return res.status(400).json({ error: 'Invalid amount' });
 
     const user = await prisma.user.update({
-      where: { id: req.params.id },
+      where: { id: uid },
       data: { walletBalance: { increment: parsedAmount } },
     });
 
-    // Log as an internal transaction
     await prisma.transaction.create({
       data: {
-        userId: req.params.id,
+        userId: uid,
         type: 'DEPOSIT',
         amount: parsedAmount,
         method: 'INTERNAL',
         status: 'COMPLETED',
-        txHash: note || `Admin credit by ${req.user?.id}`,
+        txHash: String(note || `Admin credit by ${req.user?.id}`),
       },
     });
 
@@ -154,27 +154,28 @@ router.post('/users/:id/wallet/credit', async (req: AuthRequest, res: Response) 
 
 router.post('/users/:id/wallet/debit', async (req: AuthRequest, res: Response) => {
   try {
+    const uid = String(req.params.id);
     const { amount, note } = req.body;
     const parsedAmount = parseFloat(amount);
     if (!parsedAmount || parsedAmount <= 0) return res.status(400).json({ error: 'Invalid amount' });
 
-    const user = await prisma.user.findUnique({ where: { id: req.params.id } });
+    const user = await prisma.user.findUnique({ where: { id: uid } });
     if (!user) return res.status(404).json({ error: 'User not found' });
     if (user.walletBalance < parsedAmount) return res.status(400).json({ error: 'Insufficient balance' });
 
     const updated = await prisma.user.update({
-      where: { id: req.params.id },
+      where: { id: uid },
       data: { walletBalance: { decrement: parsedAmount } },
     });
 
     await prisma.transaction.create({
       data: {
-        userId: req.params.id,
+        userId: uid,
         type: 'WITHDRAWAL',
         amount: parsedAmount,
         method: 'INTERNAL',
         status: 'COMPLETED',
-        txHash: note || `Admin debit by ${req.user?.id}`,
+        txHash: String(note || `Admin debit by ${req.user?.id}`),
       },
     });
 
@@ -187,18 +188,19 @@ router.post('/users/:id/wallet/debit', async (req: AuthRequest, res: Response) =
 // ── Admin: Add promo / bonus funds ────────────────────────
 router.post('/users/:id/wallet/bonus', async (req: AuthRequest, res: Response) => {
   try {
+    const uid = String(req.params.id);
     const { amount, promoCode } = req.body;
     const parsedAmount = parseFloat(amount);
     if (!parsedAmount || parsedAmount <= 0) return res.status(400).json({ error: 'Invalid amount' });
 
     const user = await prisma.user.update({
-      where: { id: req.params.id },
+      where: { id: uid },
       data: { walletBalance: { increment: parsedAmount } },
     });
 
     await prisma.transaction.create({
       data: {
-        userId: req.params.id,
+        userId: uid,
         type: 'DEPOSIT',
         amount: parsedAmount,
         method: 'INTERNAL',
@@ -216,13 +218,11 @@ router.post('/users/:id/wallet/bonus', async (req: AuthRequest, res: Response) =
 // ── Admin: Reset user password ────────────────────────────
 router.post('/users/:id/reset-password', async (req: AuthRequest, res: Response) => {
   try {
+    const uid = String(req.params.id);
     const { newPassword } = req.body;
     if (!newPassword || newPassword.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
     const passwordHash = await bcrypt.hash(newPassword, 12);
-    await prisma.user.update({
-      where: { id: req.params.id },
-      data: { passwordHash },
-    });
+    await prisma.user.update({ where: { id: uid }, data: { passwordHash } });
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: 'Failed to reset password' });
@@ -232,7 +232,7 @@ router.post('/users/:id/reset-password', async (req: AuthRequest, res: Response)
 // ── Admin: Manage trading accounts ────────────────────────
 router.get('/users/:id/accounts', async (req, res) => {
   try {
-    const accounts = await prisma.tradingAccount.findMany({ where: { userId: req.params.id } });
+    const accounts = await prisma.tradingAccount.findMany({ where: { userId: String(req.params.id) } });
     res.json(accounts);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
@@ -243,7 +243,7 @@ router.patch('/users/:id/accounts/:accountId', async (req, res) => {
   try {
     const { type, balance, leverage, status } = req.body;
     const account = await prisma.tradingAccount.update({
-      where: { id: req.params.accountId },
+      where: { id: String(req.params.accountId) },
       data: {
         ...(type ? { type } : {}),
         ...(balance !== undefined ? { balance: parseFloat(balance) } : {}),
@@ -259,21 +259,20 @@ router.patch('/users/:id/accounts/:accountId', async (req, res) => {
 
 router.delete('/users/:id/accounts/:accountId', async (req, res) => {
   try {
-    await prisma.tradingAccount.delete({ where: { id: req.params.accountId } });
+    await prisma.tradingAccount.delete({ where: { id: String(req.params.accountId) } });
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete trading account' });
   }
 });
 
-// ── Admin: Delete user (hard) ─────────────────────────────
 router.delete('/users/:id', async (req, res) => {
   try {
-    // Delete related records first
-    await prisma.transaction.deleteMany({ where: { userId: req.params.id } });
-    await prisma.kycDocument.deleteMany({ where: { userId: req.params.id } });
-    await prisma.tradingAccount.deleteMany({ where: { userId: req.params.id } });
-    await prisma.user.delete({ where: { id: req.params.id } });
+    const uid = String(req.params.id);
+    await prisma.transaction.deleteMany({ where: { userId: uid } });
+    await prisma.kycDocument.deleteMany({ where: { userId: uid } });
+    await prisma.tradingAccount.deleteMany({ where: { userId: uid } });
+    await prisma.user.delete({ where: { id: uid } });
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete user' });
