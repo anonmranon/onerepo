@@ -16,6 +16,7 @@ import BlogCard from '../components/BlogCard';
 import AwardItem from '../components/AwardItem';
 import { Helmet } from 'react-helmet-async';
 import StatsBar from '../components/StatsBar';
+import FAQ from '../components/FAQ';
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -393,6 +394,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* FAQ Section */}
+      <FAQ />
 
       {/* 9. Payment Methods */}
       <section className="relative bg-white py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
