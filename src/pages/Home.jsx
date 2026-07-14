@@ -24,7 +24,7 @@ const FEATURES = [
     keyName: 'assets',
     title: 'Various assets',
     description:
-      'Trade over 300 financial instruments across Forex, Share CFDs, Indices, and Commodities, all from a single integrated account.',
+      'Trade over 300 financial instruments across Crypto, Forex, Real Estate, and Gold, all from a single integrated account.',
   },
   {
     keyName: 'market',
@@ -247,7 +247,7 @@ export default function Home() {
     <>
       <Helmet>
         <title>Liquid Broker | Advanced Trading Platform</title>
-        <meta name="description" content="Trade Forex, CFDs, Indices and Cryptocurrencies with zero commission on Liquid Broker. Advanced tools for serious traders." />
+        <meta name="description" content="Trade Crypto, Forex, Real Estate and Gold with zero commission on Liquid Broker. Advanced tools for serious investors." />
       </Helmet>
 
       {/* 1. Live Market Ticker (CoinGecko real-time data) */}

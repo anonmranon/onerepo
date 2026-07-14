@@ -9,12 +9,12 @@ const KB = {
   // Core platform info
   about: {
     triggers: ['who are you', 'what is liquid', 'about liquid', 'about the company', 'tell me about', 'what do you do', 'who is liquid broker'],
-    response: `**Liquid Broker** is a premier online trading platform offering access to a wide range of financial instruments including Forex, Crypto, Share CFDs, Indices, and Commodities. We are regulated, client-focused, and committed to providing world-class trading conditions and support.
+    response: `**Liquid Broker** is a premier online trading platform offering access to Crypto, Forex, Real Estate, and Gold. We are regulated, client-focused, and committed to providing world-class trading conditions and support.
 
 We offer:
 • **300+ trading instruments** across multiple asset classes
 • **MetaTrader 5 (MT5)** — the world's most popular trading platform
-• **Multiple account types** — Standard, Pro, VIP, and Demo
+• **Multiple account types** — Standard, Gold, ECN, and Demo
 • **24/5 dedicated support** for all our clients`
   },
 
@@ -23,13 +23,13 @@ We offer:
     triggers: ['account type', 'what accounts', 'demo account', 'live account', 'standard account', 'pro account', 'vip account', 'open account'],
     response: `We offer **4 account types** at Liquid Broker:
 
-🟢 **Demo Account** — Start with $10,000 virtual funds. Practice risk-free with real market conditions. Perfect for beginners.
+🟢 **Demo Account** — Start with virtual funds. Practice risk-free with real market conditions. Perfect for beginners.
 
-🔵 **Standard Account** — Entry-level live trading. Low spreads, no commission. Minimum deposit required.
+🔵 **Standard Account** — Entry-level live trading. Spreads from 1.0 pips. Minimum deposit $1,000.
 
-🟡 **Pro Account** — For experienced traders. Tighter spreads, faster execution, advanced tools.
+🟡 **Gold Account** — Premium Choice. Priority support, dedicated account manager. Minimum deposit $5,000.
 
-🔴 **VIP Account** — Exclusive conditions, dedicated account manager, priority support, custom leverage.
+🔴 **ECN Account** — Professional Grade. Raw interbank spreads from 0.0 pips. Minimum deposit $10,000.
 
 You can open an account at: **/create-account**`
   },
@@ -37,13 +37,12 @@ You can open an account at: **/create-account**`
   // Markets & Instruments
   markets: {
     triggers: ['forex', 'crypto', 'cryptocurrency', 'bitcoin', 'stock', 'indices', 'commodity', 'gold', 'oil', 'what can i trade', 'markets', 'instruments', 'assets'],
-    response: `At Liquid Broker, you can trade **300+ instruments** across 5 major asset classes:
+    response: `At Liquid Broker, you can trade across 4 major asset classes:
 
-📈 **Forex** — EUR/USD, GBP/USD, USD/JPY, AUD/USD, and 30+ more currency pairs
-🪙 **Crypto** — BTC, ETH, SOL, XRP, ADA, BNB, DOGE, MATIC, DOT, LTC, and more
-📊 **Indices** — S&P 500, NASDAQ 100, Dow Jones, FTSE 100, DAX 40
-🥇 **Commodities** — Gold (XAU/USD), Silver, Crude Oil (WTI & Brent), Natural Gas
-🏢 **Share CFDs** — Trade global equities as CFDs without owning the shares`
+📈 **Crypto** — BTC, ETH, SOL, XRP, ADA, BNB, and more
+💱 **Forex** — EUR/USD, GBP/USD, USD/JPY, and 30+ more currency pairs
+🏢 **Real Estate** — Access prime global real estate markets through tokenized assets
+🥇 **Gold** — Trade spot Gold (XAU/USD) with ultra-tight spreads`
   },
 
   // Deposits
@@ -101,7 +100,7 @@ You need to submit **2 documents** to get verified:
 1. **Open a Trading Account** in your Dashboard
 2. **Fund it** by transferring from your main wallet
 3. Go to **Dashboard → Trade Now**
-4. Select your **market** (Crypto, Forex, Indices, Commodities)
+4. Select your **market** (Crypto, Forex, Real Estate, Gold)
 5. Choose your **instrument** (e.g. BTC/USD)
 6. Set your **order details:**
    - Volume (Lots) — how much you're trading
@@ -209,9 +208,9 @@ We are committed to maintaining a safe, fair, and transparent trading environmen
   default: `I'm the **Liquid Broker AI Assistant** and I can help you with information about our platform! 🤖
 
 Here are some things I can help with:
-- 📋 **Account Types** — Demo, Standard, Pro, VIP
+- 📋 **Account Types** — Demo, Standard, Gold, ECN
 - 💰 **Deposits & Withdrawals**
-- 📈 **Markets & Instruments** — Forex, Crypto, Indices, Commodities
+- 📈 **Markets & Instruments** — Crypto, Forex, Real Estate, Gold
 - 🪪 **KYC Verification**
 - 💹 **How to Trade**
 - 🖥️ **Trading Platforms (MT5)**

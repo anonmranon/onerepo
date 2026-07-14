@@ -4,17 +4,17 @@ import { ChevronDown } from 'lucide-react';
 
 const FOOTER_LINKS = {
   PRODUCTS: [
-    { label: 'Share CFDs',    path: '/markets/share-cfds' },
-    { label: 'Forex Trading', path: '/markets/forex' },
-    { label: 'Indices CFDs',  path: '/markets/indices' },
-    { label: 'Commodities',   path: '/markets/commodities' },
-    { label: 'MetaTrader 5',  path: '/platforms/mt5' },
+    { label: 'Crypto Trading', path: '/markets/crypto' },
+    { label: 'Forex Trading',  path: '/markets/forex' },
+    { label: 'Real Estate',    path: '/markets/real-estate' },
+    { label: 'Gold Trading',   path: '/markets/gold' },
+    { label: 'MetaTrader 5',   path: '/platforms/mt5' },
   ],
   ACCOUNTS: [
     { label: 'Demo Account',     path: '/accounts' },
     { label: 'Standard Account', path: '/accounts' },
+    { label: 'Gold Account',     path: '/accounts' },
     { label: 'ECN Account',      path: '/accounts' },
-    { label: 'Islamic Account',  path: '/accounts' },
   ],
   RESOURCES: [
     { label: 'Market Insights',    path: '/company/news' },

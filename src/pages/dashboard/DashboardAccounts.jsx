@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { PlusCircle, Loader2 } from 'lucide-react';
 import { accountsApi } from '../../services/api';
 
-const ACCOUNT_TYPES = ['DEMO', 'STANDARD', 'ECN', 'ISLAMIC'];
+const ACCOUNT_TYPES = ['DEMO', 'STANDARD', 'GOLD', 'ECN'];
 
 export default function DashboardAccounts() {
   const [accounts, setAccounts] = useState([]);

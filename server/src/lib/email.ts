@@ -2,7 +2,9 @@ import { Resend } from 'resend';
 
 // Use environment variable, fallback to dummy for local dev if not provided
 const resend = new Resend(process.env.RESEND_API_KEY || 're_dummy');
-const FROM_EMAIL = 'Liquid Global <onboarding@resend.dev>'; // Resend testing email
+// Use env var if set (set RESEND_FROM_EMAIL on Fly.io once domain is verified)
+// e.g: fly secrets set RESEND_FROM_EMAIL="Liquid Broker <no-reply@liquidglobalinvestments.com>" --app onerepo
+const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'Liquid Broker <onboarding@resend.dev>';
 
 /**
  * Helper to safely send emails without crashing the server

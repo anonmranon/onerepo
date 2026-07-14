@@ -4,13 +4,13 @@ import StatsBar from '../components/StatsBar';
 
 const MARKETS = [
   {
-    icon: '📈',
-    title: 'Share CFDs',
-    to: '/markets/share-cfds',
-    spread: 'From 0.1%',
-    leverage: 'Up to 1:5',
+    icon: '₿',
+    title: 'Crypto',
+    to: '/markets/crypto',
+    spread: 'From 0.01%',
+    leverage: 'Up to 1:100',
     description:
-      'Trade the world\'s most influential companies — Apple, Google, Tesla, Amazon, and hundreds more — without owning the underlying shares. Profit from both rising and falling markets.',
+      'Trade Bitcoin, Ethereum, Solana, and other leading cryptocurrencies with deep liquidity, tight spreads, and secure execution 24/7.',
   },
   {
     icon: '💱',
@@ -22,22 +22,22 @@ const MARKETS = [
       'Access the world\'s largest and most liquid market with over 60 currency pairs, including major, minor, and exotic pairs — available 24 hours a day, 5 days a week.',
   },
   {
-    icon: '🌐',
-    title: 'Indices',
-    to: '/markets/indices',
-    spread: 'From 0.4 pts',
-    leverage: 'Up to 1:100',
+    icon: '🏢',
+    title: 'Real Estate',
+    to: '/markets/real-estate',
+    spread: 'From 0.1%',
+    leverage: 'Up to 1:10',
     description:
-      'Gain diversified exposure to entire economies with CFDs on the world\'s leading indices, including the S&P 500, NASDAQ 100, FTSE 100, DAX 40, and Nikkei 225.',
+      'Access prime global real estate markets through tokenized assets and REITs. Diversify your portfolio with high-yield, tangible asset investments.',
   },
   {
-    icon: '🪙',
-    title: 'Commodities',
-    to: '/markets/commodities',
+    icon: '🥇',
+    title: 'Gold',
+    to: '/markets/gold',
     spread: 'From $0.03',
-    leverage: 'Up to 1:100',
+    leverage: 'Up to 1:200',
     description:
-      'Trade Gold, Silver, Crude Oil, Natural Gas, and a range of agricultural commodities with competitive spreads and flexible leverage — hedge your portfolio or speculate on price moves.',
+      'Trade spot Gold (XAU/USD) with ultra-tight spreads, lightning-fast execution, and institutional liquidity. Secure your wealth and capitalize on market volatility.',
   },
 ];
 

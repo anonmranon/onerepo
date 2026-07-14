@@ -9,10 +9,10 @@ const NAV_ITEMS = [
     path: '/markets',
     dropdown: [
       { label: 'All Markets',  path: '/markets' },
-      { label: 'Share CFDs',   path: '/markets/share-cfds' },
+      { label: 'Crypto',       path: '/markets/crypto' },
       { label: 'Forex',        path: '/markets/forex' },
-      { label: 'Indices',      path: '/markets/indices' },
-      { label: 'Commodities',  path: '/markets/commodities' },
+      { label: 'Real Estate',  path: '/markets/real-estate' },
+      { label: 'Gold',         path: '/markets/gold' },
     ],
   },
   {
@@ -40,6 +40,7 @@ const NAV_ITEMS = [
       { label: 'Account Types',    path: '/accounts' },
       { label: 'Demo Account',     path: '/accounts#demo' },
       { label: 'Standard Account', path: '/accounts#standard' },
+      { label: 'Gold Account',     path: '/accounts#gold' },
       { label: 'ECN Account',      path: '/accounts#ecn' },
     ],
   },

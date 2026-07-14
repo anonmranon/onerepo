@@ -244,7 +244,7 @@ export default function CreateAccount() {
                 <>
                   {[
                     { label: 'Trading Experience', name: 'experience', options: ['No experience', 'Less than 1 year', '1–3 years', '3–5 years', '5+ years'] },
-                    { label: 'Preferred Account Type', name: 'accountType', options: ['Demo', 'Standard', 'ECN', 'Islamic'] },
+                    { label: 'Preferred Account Type', name: 'accountType', options: ['Demo', 'Standard', 'Gold', 'ECN'] },
                     { label: 'Estimated Annual Income', name: 'income', options: ['Under $20,000', '$20,000–$50,000', '$50,000–$100,000', 'Over $100,000'] },
                     { label: 'Source of Funds', name: 'sourceOfFunds', options: ['Employment income', 'Business profits', 'Savings', 'Investments', 'Inheritance'] },
                   ].map(({ label, name, options }) => (
@@ -260,7 +260,7 @@ export default function CreateAccount() {
                   <div>
                     <label className="block text-xs font-semibold text-body-dark mb-2">Preferred Trading Instruments</label>
                     <div className="grid grid-cols-2 gap-2">
-                      {['Forex', 'Share CFDs', 'Indices', 'Commodities', 'Cryptocurrencies', 'Bonds'].map(inst => (
+                      {['Crypto', 'Forex', 'Real Estate', 'Gold'].map(inst => (
                         <label key={inst} htmlFor={`inst-${inst}`} className="flex items-center gap-2 text-sm text-body-dark cursor-pointer">
                           <input id={`inst-${inst}`} type="checkbox" className="accent-primary" checked={formData.instruments.includes(inst)} onChange={() => handleInstrumentChange(inst)} />
                           {inst}

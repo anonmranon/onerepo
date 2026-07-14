@@ -4,10 +4,10 @@ import ErrorBoundary from './components/ErrorBoundary';
 
 import Home from './pages/Home';
 import Markets from './pages/Markets';
-import ShareCFDs from './pages/ShareCFDs';
 import Forex from './pages/Forex';
-import Indices from './pages/Indices';
-import Commodities from './pages/Commodities';
+import RealEstate from './pages/RealEstate';
+import Gold from './pages/Gold';
+import Crypto from './pages/Crypto';
 import Company from './pages/Company';
 import CompanyNews from './pages/CompanyNews';
 import Partnership from './pages/Partnership';
@@ -53,10 +53,10 @@ export default function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="markets" element={<Markets />} />
-            <Route path="markets/share-cfds" element={<ShareCFDs />} />
+            <Route path="markets/crypto" element={<Crypto />} />
             <Route path="markets/forex" element={<Forex />} />
-            <Route path="markets/indices" element={<Indices />} />
-            <Route path="markets/commodities" element={<Commodities />} />
+            <Route path="markets/real-estate" element={<RealEstate />} />
+            <Route path="markets/gold" element={<Gold />} />
             <Route path="company" element={<Company />} />
             <Route path="company/news" element={<CompanyNews />} />
             <Route path="company/partnership" element={<Partnership />} />

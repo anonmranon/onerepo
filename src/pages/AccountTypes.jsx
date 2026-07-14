@@ -26,7 +26,7 @@ const ACCOUNTS = [
     tagline: 'Most Popular',
     color: 'border-white/30',
     badge: 'text-white bg-white/10',
-    minDeposit: '$200',
+    minDeposit: '$1,000',
     spread: 'From 1.0 pips',
     leverage: 'Up to 1:500',
     commission: 'None',
@@ -37,13 +37,29 @@ const ACCOUNTS = [
     description: 'Our most popular account — designed for everyday traders who want competitive conditions with no commission on trades.',
   },
   {
+    type: 'Gold',
+    icon: '🥇',
+    tagline: 'Premium Choice',
+    color: 'border-[#f59e0b]',
+    badge: 'text-[#f59e0b] bg-[#f59e0b]/10',
+    minDeposit: '$5,000',
+    spread: 'From 0.8 pips',
+    leverage: 'Up to 1:400',
+    commission: 'None',
+    platforms: 'Web, App, MT5',
+    features: ['Premium market insights', 'Priority support', 'Dedicated account manager', 'Free deposits & withdrawals', 'Exclusive webinars'],
+    cta: 'OPEN GOLD',
+    to: '/create-account',
+    description: 'A premium account offering enhanced trading conditions, dedicated support, and advanced insights for serious investors.',
+  },
+  {
     type: 'ECN',
     icon: '🏆',
     tagline: 'Professional Grade',
     color: 'border-primary',
     badge: 'text-primary bg-primary/10',
     highlight: true,
-    minDeposit: '$1,000',
+    minDeposit: '$10,000',
     spread: 'From 0.0 pips',
     leverage: 'Up to 1:500',
     commission: '$3.50 per lot',
@@ -53,22 +69,6 @@ const ACCOUNTS = [
     to: '/create-account',
     description: 'Raw, commission-based pricing with direct market access. The preferred choice of experienced traders and scalpers.',
   },
-  {
-    type: 'Islamic',
-    icon: '☪️',
-    tagline: 'Swap-Free',
-    color: 'border-green-400',
-    badge: 'text-green-400 bg-green-400/10',
-    minDeposit: '$200',
-    spread: 'From 1.2 pips',
-    leverage: 'Up to 1:200',
-    commission: 'None',
-    platforms: 'Web, App, MT5',
-    features: ['No overnight swap charges', 'Compliant with Sharia law', 'Certified by Islamic scholars', 'All major asset classes', 'Standard account benefits'],
-    cta: 'OPEN ISLAMIC',
-    to: '/create-account',
-    description: 'A fully Sharia-compliant account with no interest charges on overnight positions — available to all traders upon request.',
-  },
 ];
 
 export default function AccountTypes() {
@@ -76,7 +76,7 @@ export default function AccountTypes() {
     <>
       <Helmet>
         <title>Account Types | Liquid Broker</title>
-        <meta name="description" content="Compare our Demo, Standard, ECN, and Islamic trading accounts. Find the perfect account type for your trading strategy." />
+        <meta name="description" content="Compare our Demo, Standard, Gold, and ECN trading accounts. Find the perfect account type for your trading strategy." />
       </Helmet>
 
       <section className="bg-dark pt-28 pb-20 px-4 sm:px-6 lg:px-8">

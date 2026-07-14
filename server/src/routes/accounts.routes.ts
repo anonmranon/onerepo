@@ -20,7 +20,7 @@ router.get('/', authenticateToken, async (req: AuthRequest, res: Response) => {
 router.post('/', authenticateToken, async (req: AuthRequest, res: Response) => {
   try {
     const { type = 'DEMO', leverage = 100 } = req.body;
-    const VALID_TYPES = ['DEMO', 'STANDARD', 'ECN', 'ISLAMIC'];
+    const VALID_TYPES = ['DEMO', 'STANDARD', 'GOLD', 'ECN'];
     if (!VALID_TYPES.includes(type)) {
       return res.status(400).json({ error: 'Invalid account type' });
     }
