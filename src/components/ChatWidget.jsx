@@ -25,11 +25,11 @@ We offer:
 
 🟢 **Demo Account** — Start with virtual funds. Practice risk-free with real market conditions. Perfect for beginners.
 
-🔵 **Standard Account** — Entry-level live trading. Spreads from 1.0 pips. Minimum deposit $1,000.
+🔵 **Standard Account** — Entry-level live trading. Spreads from 1.0 pips. Deposit range: **$1,000 – $9,999**.
 
-🟡 **Gold Account** — Premium Choice. Priority support, dedicated account manager. Minimum deposit $5,000.
+🟡 **Gold Account** — Premium Choice. Priority support, dedicated account manager. Deposit range: **$10,000 – $49,999**.
 
-🔴 **ECN Account** — Professional Grade. Raw interbank spreads from 0.0 pips. Minimum deposit $10,000.
+🔴 **ECN Account** — Professional Grade. Raw interbank spreads from 0.0 pips. Minimum deposit: **$50,000+**.
 
 You can open an account at: **/create-account**`
   },
