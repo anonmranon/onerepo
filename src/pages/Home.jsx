@@ -261,10 +261,10 @@ export default function Home() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-14 sm:mb-20">
             <h2 className="text-2xl sm:text-3.5xl lg:text-4xl font-extrabold text-white leading-[1.15] tracking-tight">
-              Save time. Get{' '}
-              <span className="text-primary">higher return.</span>
+              Save your time.{' '}
+              <span className="text-primary">Grow your wealth.</span>
               <br />
-              Multiply wealth.
+              Take control only by saving a little more!
             </h2>
             <Link
               to="/accounts"
