@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, ChevronRight, Globe, Apple, Laptop, Smartphone } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
 
 import payment1 from '../assets/in-liquid-payment-1.svg?url';
 import payment2 from '../assets/in-liquid-payment-2.svg?url';
@@ -17,6 +18,40 @@ import AwardItem from '../components/AwardItem';
 import { Helmet } from 'react-helmet-async';
 import StatsBar from '../components/StatsBar';
 import FAQ from '../components/FAQ';
+
+// ─── Shared animation variants ────────────────────────────────────────────────
+
+// Fade + slide up — most section headings & text
+const fadeUp = {
+  hidden: { opacity: 0, y: 40 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] } },
+};
+
+// Stagger wrapper for lists/grids
+const staggerContainer = (stagger = 0.1, delay = 0) => ({
+  hidden: {},
+  show: { transition: { staggerChildren: stagger, delayChildren: delay } },
+});
+
+// Stagger child — each card/item fades+rises after the previous
+const staggerItem = {
+  hidden: { opacity: 0, y: 32 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+};
+
+// Slide from left / right for two-column sections
+const slideLeft  = { hidden: { opacity: 0, x: -60 }, show: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } } };
+const slideRight = { hidden: { opacity: 0, x:  60 }, show: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } } };
+
+// Scale pop for step circles
+const scalePop = {
+  hidden: { opacity: 0, scale: 0.6 },
+  show: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: [0.34, 1.56, 0.64, 1] } },
+};
+
+// Viewport trigger settings — animate once, when 20% visible
+const VP = { once: true, amount: 0.2 };
+
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -257,86 +292,134 @@ export default function Home() {
       {/* 2. Hero Carousel */}
       <Hero />
 
-      {/* 3. Features Section */}
-      <section className="bg-dark py-20 sm:py-28 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-14 sm:mb-20">
-            <h2 className="text-2xl sm:text-3.5xl lg:text-4xl font-extrabold text-white leading-[1.15] tracking-tight">
+      {/* 3. Features Section — heading fades up, cards stagger in */}
+      <section className="bg-dark py-20 sm:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        {/* Decorative floating orbs (CSS animated, not layout-triggering) */}
+        <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl blob-morph pointer-events-none" />
+        <div className="absolute -bottom-16 right-0 w-72 h-72 bg-primary/5 rounded-full blur-2xl float-slow-r pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto relative z-10">
+          {/* Heading fades up */}
+          <motion.div
+            variants={staggerContainer(0.15, 0)}
+            initial="hidden" whileInView="show" viewport={VP}
+            className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-14 sm:mb-20"
+          >
+            <motion.h2
+              variants={fadeUp}
+              className="text-2xl sm:text-3.5xl lg:text-4xl font-extrabold text-white leading-[1.15] tracking-tight"
+            >
               Save your time.{' '}
               <span className="text-primary">Grow your wealth.</span>
               <br />
               Take control only by saving a little more!
-            </h2>
-            <Link
-              to="/accounts"
-              className="inline-flex items-center gap-2 border border-white/20 hover:border-white text-white text-xs font-bold tracking-widest px-8 py-4 rounded-[4px] hover:bg-white/5 transition-all duration-250 self-start sm:self-center flex-shrink-0"
-            >
-              FIND OUT MORE <ChevronRight className="w-3.5 h-3.5 stroke-[3.5]" />
-            </Link>
-          </div>
+            </motion.h2>
+            {/* Button with pulse-glow and scale on hover */}
+            <motion.div variants={fadeUp}>
+              <Link
+                to="/accounts"
+                className="pulse-glow inline-flex items-center gap-2 border border-white/20 hover:border-primary text-white text-xs font-bold tracking-widest px-8 py-4 rounded-[4px] hover:bg-primary/10 transition-all duration-300 self-start sm:self-center flex-shrink-0"
+              >
+                FIND OUT MORE <ChevronRight className="w-3.5 h-3.5 stroke-[3.5]" />
+              </Link>
+            </motion.div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+          {/* Cards stagger in one by one */}
+          <motion.div
+            variants={staggerContainer(0.12, 0.1)}
+            initial="hidden" whileInView="show" viewport={VP}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+          >
             {FEATURES.map((f) => (
-              <DarkFeatureCard key={f.keyName} {...f} />
+              <motion.div key={f.keyName} variants={staggerItem}
+                whileHover={{ y: -6, transition: { duration: 0.2 } }}
+              >
+                <DarkFeatureCard {...f} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* 4. Why Choose Us */}
+      {/* 4. Why Choose Us — cards stagger in */}
       <section className="bg-[#f8f3ef] py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+            variants={staggerContainer(0.1, 0.05)}
+            initial="hidden" whileInView="show" viewport={VP}
+          >
             {WHY_CARDS.map((card) => (
-              <WhyCard key={card.keyName} {...card} />
+              <motion.div key={card.keyName} variants={staggerItem}
+                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+              >
+                <WhyCard {...card} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* 5. Simple Steps */}
+      {/* 5. Simple Steps — label fades, circles scale-pop with bounce */}
       <section className="bg-white py-24 px-4 sm:px-6 lg:px-8 border-b border-gray-100/50">
-        <div className="max-w-4xl mx-auto border border-gray-200/80 rounded-2xl py-12 px-8 bg-[#fcfaf7] shadow-sm">
+        <motion.div
+          className="max-w-4xl mx-auto border border-gray-200/80 rounded-2xl py-12 px-8 bg-[#fcfaf7] shadow-sm"
+          variants={fadeUp} initial="hidden" whileInView="show" viewport={VP}
+        >
           <p className="text-center text-primary font-bold text-xs tracking-[0.05em] uppercase mb-10">
             Simple steps to start trading
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 relative">
-            {/* Horizontal connection lines */}
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-3 gap-8 relative"
+            variants={staggerContainer(0.18, 0.15)}
+            initial="hidden" whileInView="show" viewport={VP}
+          >
             <div className="absolute top-6 left-[16%] right-[16%] h-0.5 bg-gray-200 hidden sm:block z-0" />
             {STEPS.map(({ num, label }) => (
-              <div key={num} className="flex flex-col items-center gap-3 relative z-10">
+              <motion.div key={num} variants={scalePop} className="flex flex-col items-center gap-3 relative z-10">
                 <div className="w-12 h-12 rounded-full border-2 border-primary bg-white flex items-center justify-center text-primary font-bold text-base shadow-sm">
                   {num}
                 </div>
                 <p className="text-sm text-gray-700 font-semibold tracking-wide text-center">{label}</p>
-              </div>
+              </motion.div>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </section>
 
-      {/* 6. Platform Section */}
+      {/* 6. Platform Section — laptop slides from left, text from right */}
       <section className="bg-[#fcfaf7] py-24 px-4 sm:px-6 lg:px-8 border-b border-gray-100/50">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* Laptop mockup */}
-            <div className="order-2 lg:order-1">
+            {/* Laptop mockup — slides in from left */}
+            <motion.div
+              className="order-2 lg:order-1"
+              variants={slideLeft} initial="hidden" whileInView="show" viewport={VP}
+            >
               <LaptopMockup />
-            </div>
-            {/* Text */}
-            <div className="order-1 lg:order-2">
-              <p className="text-primary text-xs font-bold tracking-[0.05em] uppercase mb-4">
+            </motion.div>
+            {/* Text block — slides in from right */}
+            <motion.div
+              className="order-1 lg:order-2"
+              variants={staggerContainer(0.1, 0)}
+              initial="hidden" whileInView="show" viewport={VP}
+            >
+              <motion.p variants={fadeUp} className="text-primary text-xs font-bold tracking-[0.05em] uppercase mb-4">
                 AVAILABLE ON MULTIPLE PLATFORMS
-              </p>
-              <h2 className="text-gray-900 font-extrabold mb-6">
+              </motion.p>
+              <motion.h2 variants={fadeUp} className="text-gray-900 font-extrabold mb-6">
                 World-class platform.<br />Trade with confidence.
-              </h2>
-              <p className="text-gray-600 text-base leading-[1.6] mb-10 max-w-lg">
+              </motion.h2>
+              <motion.p variants={fadeUp} className="text-gray-600 text-base leading-[1.6] mb-10 max-w-lg">
                 Engineered for high-frequency trading, our server infrastructure ensures sub-millisecond order routing and maximum uptime during peak market volatility.
-              </p>
-              
-              {/* Platform Cards Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              </motion.p>
+
+              {/* Platform cards — stagger */}
+              <motion.div
+                className="grid grid-cols-2 sm:grid-cols-3 gap-4"
+                variants={staggerContainer(0.08, 0.2)}
+              >
                 {[
                   { Icon: Globe, label: 'Web Trader', desc: 'Browser platform' },
                   { Icon: Apple, label: 'macOS App', desc: 'Desktop client' },
@@ -344,30 +427,34 @@ export default function Home() {
                   { Icon: Smartphone, label: 'iOS App', desc: 'Mobile terminal' },
                   { Icon: Smartphone, label: 'Android App', desc: 'Mobile terminal' },
                 ].map(({ Icon, label, desc }) => (
-                  <Link
-                    to="/platforms"
-                    key={label}
-                    className="bg-white border border-gray-200/80 rounded-xl p-5 hover:border-primary hover:shadow-md transition-all group flex flex-col gap-3"
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-500 group-hover:bg-primary/10 group-hover:text-primary transition-all">
-                      <Icon className="w-5 h-5" strokeWidth={1.75} />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-gray-900 group-hover:text-primary transition-colors">{label}</div>
-                      <div className="text-[10px] text-gray-500 mt-0.5">{desc}</div>
-                    </div>
-                  </Link>
+                  <motion.div key={label} variants={staggerItem}>
+                    <Link
+                      to="/platforms"
+                      className="bg-white border border-gray-200/80 rounded-xl p-5 hover:border-primary hover:shadow-md hover:-translate-y-1 transition-all duration-200 group flex flex-col gap-3"
+                    >
+                      <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-500 group-hover:bg-primary/10 group-hover:text-primary transition-all">
+                        <Icon className="w-5 h-5" strokeWidth={1.75} />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-gray-900 group-hover:text-primary transition-colors">{label}</div>
+                        <div className="text-[10px] text-gray-500 mt-0.5">{desc}</div>
+                      </div>
+                    </Link>
+                  </motion.div>
                 ))}
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* 7. Blog / News */}
+      {/* 7. Blog / News — heading + staggered cards */}
       <section className="bg-[#f8f8f8] py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-12">
+          <motion.div
+            className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-12"
+            variants={fadeUp} initial="hidden" whileInView="show" viewport={VP}
+          >
             <h2 className="text-gray-900 tracking-tight">Stay ahead of the curve.</h2>
             <Link
               to="/company/news"
@@ -375,69 +462,97 @@ export default function Home() {
             >
               SHOW ALL <ChevronRight className="w-3.5 h-3.5 stroke-[3]" />
             </Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          </motion.div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+            variants={staggerContainer(0.12, 0.1)}
+            initial="hidden" whileInView="show" viewport={VP}
+          >
             {BLOG_POSTS.map((post) => (
-              <BlogCard key={post.title} {...post} />
+              <motion.div key={post.title} variants={staggerItem}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+              >
+                <BlogCard {...post} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
-      {/* 8. Awards */}
+      {/* 8. Awards — stagger */}
       <section className="bg-[#f8f8f8] pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {AWARDS.map((a, i) => (
-              <AwardItem key={a.title} {...a} index={i} />
-            ))}
-          </div>
-        </div>
+        <motion.div
+          className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8"
+          variants={staggerContainer(0.1, 0.05)}
+          initial="hidden" whileInView="show" viewport={VP}
+        >
+          {AWARDS.map((a, i) => (
+            <motion.div key={a.title} variants={staggerItem}>
+              <AwardItem {...a} index={i} />
+            </motion.div>
+          ))}
+        </motion.div>
       </section>
 
-      {/* FAQ Section */}
+      {/* FAQ */}
       <FAQ />
 
-      {/* 9. Payment Methods */}
+      {/* 9. Payment Methods — logos stagger, CTA button pulses */}
       <section className="relative bg-white py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Clean repeating dot-grid texture */}
         <div
           className="absolute inset-0 pointer-events-none opacity-[0.035]"
-          style={{
-            backgroundImage: 'radial-gradient(circle, #111 1px, transparent 1px)',
-            backgroundSize: '24px 24px',
-          }}
+          style={{ backgroundImage: 'radial-gradient(circle, #111 1px, transparent 1px)', backgroundSize: '24px 24px' }}
         />
-
         <div className="relative z-10 max-w-5xl mx-auto text-center">
-          <h2 className="text-gray-900 mb-3">Payment methods.</h2>
-          <p className="text-sm text-gray-500 mb-12">Deposit and withdraw with your preferred payment provider.</p>
+          <motion.h2
+            className="text-gray-900 mb-3"
+            variants={fadeUp} initial="hidden" whileInView="show" viewport={VP}
+          >Payment methods.</motion.h2>
+          <motion.p
+            className="text-sm text-gray-500 mb-12"
+            variants={fadeUp} initial="hidden" whileInView="show" viewport={{ once: true, amount: 0.3 }}
+          >Deposit and withdraw with your preferred payment provider.</motion.p>
 
-          {/* Uniform white card grid */}
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-4 mb-12">
+          {/* Payment logos stagger */}
+          <motion.div
+            className="grid grid-cols-3 sm:grid-cols-6 gap-4 mb-12"
+            variants={staggerContainer(0.07, 0.2)}
+            initial="hidden" whileInView="show" viewport={VP}
+          >
             {PAYMENT_METHODS.map(({ label, src }) => (
-              <div
+              <motion.div
                 key={label}
-                className="bg-white border border-gray-200/80 rounded-xl p-4 flex items-center justify-center hover:border-gray-300 hover:shadow-sm transition-all duration-200 aspect-[3/2]"
+                variants={staggerItem}
+                whileHover={{ scale: 1.08, transition: { duration: 0.15 } }}
+                className="bg-white border border-gray-200/80 rounded-xl p-4 flex items-center justify-center hover:border-gray-300 hover:shadow-sm transition-colors duration-200 aspect-[3/2] cursor-pointer"
                 aria-label={label}
               >
                 <img src={src} alt={label} className="h-7 w-auto object-contain" />
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
-          {/* Note Container */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-6 bg-[#faf8f5] rounded-xl border border-gray-200/80 px-8 py-5 max-w-3xl mx-auto shadow-sm">
+          {/* CTA with shimmer effect */}
+          <motion.div
+            className="flex flex-col sm:flex-row items-center justify-between gap-6 bg-[#faf8f5] rounded-xl border border-gray-200/80 px-8 py-5 max-w-3xl mx-auto shadow-sm shimmer-once"
+            variants={fadeUp} initial="hidden" whileInView="show" viewport={VP}
+          >
             <p className="text-sm text-body-light text-center sm:text-left font-medium">
               Don't see a payment method that works for you? We have other options.
             </p>
-            <Link
-              to="/accounts"
-              className="flex-shrink-0 bg-primary hover:bg-primary-dark text-white text-xs font-bold tracking-[0.05em] px-6 py-3.5 rounded-[4px] flex items-center gap-2 transition-colors"
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ duration: 0.15 }}
             >
-              MORE OPTIONS <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
+              <Link
+                to="/accounts"
+                className="flex-shrink-0 bg-primary hover:bg-primary-dark text-white text-xs font-bold tracking-[0.05em] px-6 py-3.5 rounded-[4px] flex items-center gap-2 transition-colors"
+              >
+                MORE OPTIONS <ArrowRight className="w-3.5 h-3.5" />
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
       </section>
 

@@ -90,4 +90,82 @@
     0% { transform: translateX(0); }
     100% { transform: translateX(-50%); }
   }
+
+  /* ── Floating blob morph (hero background decoration) ── */
+  @keyframes blob-morph {
+    0%,100% { border-radius: 60% 40% 70% 30% / 50% 60% 40% 60%; transform: translate(0,0) scale(1); }
+    33%      { border-radius: 40% 60% 30% 70% / 60% 40% 60% 40%; transform: translate(20px,-15px) scale(1.05); }
+    66%      { border-radius: 70% 30% 60% 40% / 40% 60% 40% 60%; transform: translate(-10px,20px) scale(0.97); }
+  }
+  .blob-morph { animation: blob-morph 8s ease-in-out infinite; }
+
+  /* ── Slow float (decorative orbs) ── */
+  @keyframes float-slow {
+    0%,100% { transform: translateY(0px) rotate(0deg); }
+    50%      { transform: translateY(-24px) rotate(4deg); }
+  }
+  @keyframes float-slow-r {
+    0%,100% { transform: translateY(0px) rotate(0deg); }
+    50%      { transform: translateY(18px) rotate(-3deg); }
+  }
+  .float-slow   { animation: float-slow   7s ease-in-out infinite; }
+  .float-slow-r { animation: float-slow-r 9s ease-in-out infinite; }
+
+  /* ── Gradient shift (hero background) ── */
+  @keyframes gradient-shift {
+    0%,100% { background-position: 0% 50%; }
+    50%      { background-position: 100% 50%; }
+  }
+  .gradient-animated {
+    background-size: 400% 400%;
+    animation: gradient-shift 12s ease infinite;
+  }
+
+  /* ── Shimmer sweep ── */
+  @keyframes shimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  .shimmer-once {
+    position: relative;
+    overflow: hidden;
+  }
+  .shimmer-once::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.07) 50%, transparent 100%);
+    animation: shimmer 2.5s ease-in-out 0.8s 1;
+  }
+
+  /* ── Pulse glow (CTA button) ── */
+  @keyframes pulse-glow {
+    0%,100% { box-shadow: 0 0 0 0 rgba(240,78,35,0); }
+    50%      { box-shadow: 0 0 28px 8px rgba(240,78,35,0.35); }
+  }
+  .pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+
+  /* ── Spin slow (decorative ring) ── */
+  @keyframes spin-slow {
+    to { transform: rotate(360deg); }
+  }
+  .spin-slow { animation: spin-slow 20s linear infinite; }
+
+  /* ── Count up animation trigger ── */
+  @keyframes count-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .stat-animate { animation: count-up 0.6s ease-out forwards; }
+
+  /* ── Respect prefers-reduced-motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    .blob-morph, .float-slow, .float-slow-r,
+    .gradient-animated, .shimmer-once::after,
+    .pulse-glow, .spin-slow, .stat-animate {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
 }
+
