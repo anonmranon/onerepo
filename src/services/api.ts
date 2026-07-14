@@ -78,6 +78,22 @@ export const adminApi = {
     request(`/admin/users/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
   updateUserRole: (id: string, role: string) =>
     request(`/admin/users/${id}/role`, { method: 'PATCH', body: JSON.stringify({ role }) }),
+  creditWallet: (id: string, amount: number, note?: string) =>
+    request(`/admin/users/${id}/wallet/credit`, { method: 'POST', body: JSON.stringify({ amount, note }) }),
+  debitWallet: (id: string, amount: number, note?: string) =>
+    request(`/admin/users/${id}/wallet/debit`, { method: 'POST', body: JSON.stringify({ amount, note }) }),
+  addBonus: (id: string, amount: number, promoCode?: string) =>
+    request(`/admin/users/${id}/wallet/bonus`, { method: 'POST', body: JSON.stringify({ amount, promoCode }) }),
+  resetPassword: (id: string, newPassword: string) =>
+    request(`/admin/users/${id}/reset-password`, { method: 'POST', body: JSON.stringify({ newPassword }) }),
+  getUserAccounts: (id: string) =>
+    request(`/admin/users/${id}/accounts`),
+  updateTradingAccount: (userId: string, accountId: string, body: object) =>
+    request(`/admin/users/${userId}/accounts/${accountId}`, { method: 'PATCH', body: JSON.stringify(body) }),
+  deleteTradingAccount: (userId: string, accountId: string) =>
+    request(`/admin/users/${userId}/accounts/${accountId}`, { method: 'DELETE' }),
+  deleteUser: (id: string) =>
+    request(`/admin/users/${id}`, { method: 'DELETE' }),
 
   // KYC
   kyc: () => request('/admin/kyc'),

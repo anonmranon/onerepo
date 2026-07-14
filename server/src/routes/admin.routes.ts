@@ -2,6 +2,7 @@ import { Router, Response } from 'express';
 import prisma from '../lib/prisma';
 import { authenticateToken, AuthRequest } from '../middleware/auth.middleware';
 import { EmailService } from '../lib/email';
+import bcrypt from 'bcryptjs';
 
 const router = Router();
 
@@ -117,6 +118,165 @@ router.patch('/users/:id/role', async (req, res) => {
     res.json(user);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// ── Admin: Credit / Debit wallet balance ──────────────────
+router.post('/users/:id/wallet/credit', async (req: AuthRequest, res: Response) => {
+  try {
+    const { amount, note } = req.body;
+    const parsedAmount = parseFloat(amount);
+    if (!parsedAmount || parsedAmount <= 0) return res.status(400).json({ error: 'Invalid amount' });
+
+    const user = await prisma.user.update({
+      where: { id: req.params.id },
+      data: { walletBalance: { increment: parsedAmount } },
+    });
+
+    // Log as an internal transaction
+    await prisma.transaction.create({
+      data: {
+        userId: req.params.id,
+        type: 'DEPOSIT',
+        amount: parsedAmount,
+        method: 'INTERNAL',
+        status: 'COMPLETED',
+        txHash: note || `Admin credit by ${req.user?.id}`,
+      },
+    });
+
+    EmailService.sendDepositApprovedAlert(user.email, user.firstName, parsedAmount, 'USD');
+    res.json({ success: true, newBalance: user.walletBalance });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to credit wallet' });
+  }
+});
+
+router.post('/users/:id/wallet/debit', async (req: AuthRequest, res: Response) => {
+  try {
+    const { amount, note } = req.body;
+    const parsedAmount = parseFloat(amount);
+    if (!parsedAmount || parsedAmount <= 0) return res.status(400).json({ error: 'Invalid amount' });
+
+    const user = await prisma.user.findUnique({ where: { id: req.params.id } });
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    if (user.walletBalance < parsedAmount) return res.status(400).json({ error: 'Insufficient balance' });
+
+    const updated = await prisma.user.update({
+      where: { id: req.params.id },
+      data: { walletBalance: { decrement: parsedAmount } },
+    });
+
+    await prisma.transaction.create({
+      data: {
+        userId: req.params.id,
+        type: 'WITHDRAWAL',
+        amount: parsedAmount,
+        method: 'INTERNAL',
+        status: 'COMPLETED',
+        txHash: note || `Admin debit by ${req.user?.id}`,
+      },
+    });
+
+    res.json({ success: true, newBalance: updated.walletBalance });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to debit wallet' });
+  }
+});
+
+// ── Admin: Add promo / bonus funds ────────────────────────
+router.post('/users/:id/wallet/bonus', async (req: AuthRequest, res: Response) => {
+  try {
+    const { amount, promoCode } = req.body;
+    const parsedAmount = parseFloat(amount);
+    if (!parsedAmount || parsedAmount <= 0) return res.status(400).json({ error: 'Invalid amount' });
+
+    const user = await prisma.user.update({
+      where: { id: req.params.id },
+      data: { walletBalance: { increment: parsedAmount } },
+    });
+
+    await prisma.transaction.create({
+      data: {
+        userId: req.params.id,
+        type: 'DEPOSIT',
+        amount: parsedAmount,
+        method: 'INTERNAL',
+        status: 'COMPLETED',
+        txHash: `PROMO:${promoCode || 'ADMIN_BONUS'}`,
+      },
+    });
+
+    res.json({ success: true, newBalance: user.walletBalance });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to add bonus' });
+  }
+});
+
+// ── Admin: Reset user password ────────────────────────────
+router.post('/users/:id/reset-password', async (req: AuthRequest, res: Response) => {
+  try {
+    const { newPassword } = req.body;
+    if (!newPassword || newPassword.length < 8) return res.status(400).json({ error: 'Password must be at least 8 characters' });
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+    await prisma.user.update({
+      where: { id: req.params.id },
+      data: { passwordHash },
+    });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to reset password' });
+  }
+});
+
+// ── Admin: Manage trading accounts ────────────────────────
+router.get('/users/:id/accounts', async (req, res) => {
+  try {
+    const accounts = await prisma.tradingAccount.findMany({ where: { userId: req.params.id } });
+    res.json(accounts);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+router.patch('/users/:id/accounts/:accountId', async (req, res) => {
+  try {
+    const { type, balance, leverage, status } = req.body;
+    const account = await prisma.tradingAccount.update({
+      where: { id: req.params.accountId },
+      data: {
+        ...(type ? { type } : {}),
+        ...(balance !== undefined ? { balance: parseFloat(balance) } : {}),
+        ...(leverage ? { leverage: parseInt(leverage) } : {}),
+        ...(status ? { status } : {}),
+      },
+    });
+    res.json(account);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to update trading account' });
+  }
+});
+
+router.delete('/users/:id/accounts/:accountId', async (req, res) => {
+  try {
+    await prisma.tradingAccount.delete({ where: { id: req.params.accountId } });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete trading account' });
+  }
+});
+
+// ── Admin: Delete user (hard) ─────────────────────────────
+router.delete('/users/:id', async (req, res) => {
+  try {
+    // Delete related records first
+    await prisma.transaction.deleteMany({ where: { userId: req.params.id } });
+    await prisma.kycDocument.deleteMany({ where: { userId: req.params.id } });
+    await prisma.tradingAccount.deleteMany({ where: { userId: req.params.id } });
+    await prisma.user.delete({ where: { id: req.params.id } });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to delete user' });
   }
 });
 
