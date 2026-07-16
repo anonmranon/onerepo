@@ -19,12 +19,12 @@ import { Helmet } from 'react-helmet-async';
 import StatsBar from '../components/StatsBar';
 import FAQ from '../components/FAQ';
 
-// ─── Shared animation variants ────────────────────────────────────────────────
+// ─── Shared animation variants (3D & Bi-directional) ────────────────────────
 
 // Fade + slide up — most section headings & text
 const fadeUp = {
-  hidden: { opacity: 0, y: 40 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.65, ease: [0.22, 1, 0.36, 1] } },
+  hidden: { opacity: 0, y: 40, rotateX: 10 },
+  show: { opacity: 1, y: 0, rotateX: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } },
 };
 
 // Stagger wrapper for lists/grids
@@ -35,22 +35,33 @@ const staggerContainer = (stagger = 0.1, delay = 0) => ({
 
 // Stagger child — each card/item fades+rises after the previous
 const staggerItem = {
-  hidden: { opacity: 0, y: 32 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] } },
+  hidden: { opacity: 0, y: 40, rotateX: 15, scale: 0.95 },
+  show: { opacity: 1, y: 0, rotateX: 0, scale: 1, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } },
 };
 
-// Slide from left / right for two-column sections
-const slideLeft  = { hidden: { opacity: 0, x: -60 }, show: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } } };
-const slideRight = { hidden: { opacity: 0, x:  60 }, show: { opacity: 1, x: 0, transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] } } };
+// 3D Flips
+const flipInX = {
+  hidden: { opacity: 0, rotateX: -60, y: 50 },
+  show: { opacity: 1, rotateX: 0, y: 0, transition: { duration: 0.8, type: 'spring', bounce: 0.4 } }
+};
+
+const flipInY = {
+  hidden: { opacity: 0, rotateY: -60, x: 50 },
+  show: { opacity: 1, rotateY: 0, x: 0, transition: { duration: 0.8, type: 'spring', bounce: 0.4 } }
+};
+
+// Slide from left / right with 3D rotation
+const slideLeft3D  = { hidden: { opacity: 0, x: -100, rotateY: 45 }, show: { opacity: 1, x: 0, rotateY: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } } };
+const slideRight3D = { hidden: { opacity: 0, x:  100, rotateY: -45 }, show: { opacity: 1, x: 0, rotateY: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } } };
 
 // Scale pop for step circles
 const scalePop = {
-  hidden: { opacity: 0, scale: 0.6 },
-  show: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: [0.34, 1.56, 0.64, 1] } },
+  hidden: { opacity: 0, scale: 0.3, rotateZ: -15 },
+  show: { opacity: 1, scale: 1, rotateZ: 0, transition: { duration: 0.5, type: 'spring', bounce: 0.6 } },
 };
 
-// Viewport trigger settings — animate once, when 20% visible
-const VP = { once: true, amount: 0.2 };
+// Viewport trigger settings — animate every time they enter the viewport
+const VP = { once: false, amount: 0.2 };
 
 
 // ─── Data ────────────────────────────────────────────────────────────────────
@@ -292,9 +303,9 @@ export default function Home() {
       {/* 2. Hero Carousel */}
       <Hero />
 
-      {/* 3. Features Section — heading fades up, cards stagger in */}
-      <section className="bg-dark py-20 sm:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-        {/* Decorative floating orbs (CSS animated, not layout-triggering) */}
+      {/* 3. Features Section — heading fades up, cards stagger in 3D */}
+      <section className="bg-dark py-20 sm:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden perspective-1000">
+        {/* Decorative floating orbs */}
         <div className="absolute -top-24 -left-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl blob-morph pointer-events-none" />
         <div className="absolute -bottom-16 right-0 w-72 h-72 bg-primary/5 rounded-full blur-2xl float-slow-r pointer-events-none" />
 
@@ -314,7 +325,6 @@ export default function Home() {
               <br />
               Take control only by saving a little more!
             </motion.h2>
-            {/* Button with pulse-glow and scale on hover */}
             <motion.div variants={fadeUp}>
               <Link
                 to="/accounts"
@@ -325,15 +335,16 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Cards stagger in one by one */}
+          {/* Cards come in side-to-side and flip */}
           <motion.div
             variants={staggerContainer(0.12, 0.1)}
             initial="hidden" whileInView="show" viewport={VP}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
           >
-            {FEATURES.map((f) => (
-              <motion.div key={f.keyName} variants={staggerItem}
-                whileHover={{ y: -6, transition: { duration: 0.2 } }}
+            {FEATURES.map((f, i) => (
+              <motion.div key={f.keyName} 
+                variants={i === 0 ? slideLeft3D : i === 2 ? slideRight3D : flipInY}
+                whileHover={{ y: -10, rotateX: 5, rotateY: -5, scale: 1.02, transition: { duration: 0.3 } }}
               >
                 <DarkFeatureCard {...f} />
               </motion.div>
@@ -342,17 +353,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. Why Choose Us — cards stagger in */}
-      <section className="bg-[#f8f3ef] py-24 px-4 sm:px-6 lg:px-8">
+      {/* 4. Why Choose Us — cards alternate sides */}
+      <section className="bg-[#f8f3ef] py-24 px-4 sm:px-6 lg:px-8 perspective-1000">
         <div className="max-w-7xl mx-auto">
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-            variants={staggerContainer(0.1, 0.05)}
+            variants={staggerContainer(0.15, 0.1)}
             initial="hidden" whileInView="show" viewport={VP}
           >
-            {WHY_CARDS.map((card) => (
-              <motion.div key={card.keyName} variants={staggerItem}
-                whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
+            {WHY_CARDS.map((card, idx) => (
+              <motion.div key={card.keyName} 
+                variants={idx % 2 === 0 ? slideLeft3D : slideRight3D}
+                whileHover={{ scale: 1.05, rotateZ: idx % 2 === 0 ? 2 : -2, transition: { duration: 0.3 } }}
               >
                 <WhyCard {...card} />
               </motion.div>
@@ -388,18 +400,19 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* 6. Platform Section — laptop slides from left, text from right */}
-      <section className="bg-[#fcfaf7] py-24 px-4 sm:px-6 lg:px-8 border-b border-gray-100/50">
+      {/* 6. Platform Section — 3D slides from sides */}
+      <section className="bg-[#fcfaf7] py-24 px-4 sm:px-6 lg:px-8 border-b border-gray-100/50 perspective-1000">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            {/* Laptop mockup — slides in from left */}
+            {/* Laptop mockup — 3D slide from left */}
             <motion.div
               className="order-2 lg:order-1"
-              variants={slideLeft} initial="hidden" whileInView="show" viewport={VP}
+              variants={slideLeft3D} initial="hidden" whileInView="show" viewport={VP}
+              whileHover={{ rotateY: 10, scale: 1.02, transition: { duration: 0.4 } }}
             >
               <LaptopMockup />
             </motion.div>
-            {/* Text block — slides in from right */}
+            {/* Text block */}
             <motion.div
               className="order-1 lg:order-2"
               variants={staggerContainer(0.1, 0)}
@@ -426,11 +439,11 @@ export default function Home() {
                   { Icon: Laptop, label: 'Windows App', desc: 'Desktop client' },
                   { Icon: Smartphone, label: 'iOS App', desc: 'Mobile terminal' },
                   { Icon: Smartphone, label: 'Android App', desc: 'Mobile terminal' },
-                ].map(({ Icon, label, desc }) => (
-                  <motion.div key={label} variants={staggerItem}>
+                ].map(({ Icon, label, desc }, idx) => (
+                  <motion.div key={label} variants={idx % 2 === 0 ? flipInX : flipInY}>
                     <Link
                       to="/platforms"
-                      className="bg-white border border-gray-200/80 rounded-xl p-5 hover:border-primary hover:shadow-md hover:-translate-y-1 transition-all duration-200 group flex flex-col gap-3"
+                      className="bg-white border border-gray-200/80 rounded-xl p-5 hover:border-primary hover:shadow-md hover:-translate-y-1 hover:scale-105 transition-all duration-300 group flex flex-col gap-3"
                     >
                       <div className="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-500 group-hover:bg-primary/10 group-hover:text-primary transition-all">
                         <Icon className="w-5 h-5" strokeWidth={1.75} />
@@ -448,8 +461,8 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 7. Blog / News — heading + staggered cards */}
-      <section className="bg-[#f8f8f8] py-20 px-4 sm:px-6 lg:px-8">
+      {/* 7. Blog / News — 3D flips */}
+      <section className="bg-[#f8f8f8] py-20 px-4 sm:px-6 lg:px-8 perspective-1000">
         <div className="max-w-7xl mx-auto">
           <motion.div
             className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-12"
@@ -465,12 +478,12 @@ export default function Home() {
           </motion.div>
           <motion.div
             className="grid grid-cols-1 md:grid-cols-3 gap-6"
-            variants={staggerContainer(0.12, 0.1)}
+            variants={staggerContainer(0.2, 0.1)}
             initial="hidden" whileInView="show" viewport={VP}
           >
-            {BLOG_POSTS.map((post) => (
-              <motion.div key={post.title} variants={staggerItem}
-                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+            {BLOG_POSTS.map((post, idx) => (
+              <motion.div key={post.title} variants={idx % 2 === 0 ? slideLeft3D : slideRight3D}
+                whileHover={{ y: -8, rotateX: 5, scale: 1.02, transition: { duration: 0.3 } }}
               >
                 <BlogCard {...post} />
               </motion.div>
@@ -479,15 +492,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 8. Awards — stagger */}
-      <section className="bg-[#f8f8f8] pb-20 px-4 sm:px-6 lg:px-8">
+      {/* 8. Awards — stagger 3D */}
+      <section className="bg-[#f8f8f8] pb-20 px-4 sm:px-6 lg:px-8 perspective-1000">
         <motion.div
           className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8"
-          variants={staggerContainer(0.1, 0.05)}
+          variants={staggerContainer(0.15, 0.05)}
           initial="hidden" whileInView="show" viewport={VP}
         >
           {AWARDS.map((a, i) => (
-            <motion.div key={a.title} variants={staggerItem}>
+            <motion.div key={a.title} variants={flipInX}>
               <AwardItem {...a} index={i} />
             </motion.div>
           ))}

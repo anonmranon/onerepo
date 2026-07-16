@@ -59,6 +59,9 @@
   .ticker-track { display: flex; width: max-content; animation: ticker 40s linear infinite; }
   .ticker-track:hover { animation-play-state: paused; }
 
+  /* 3D Perspective Container */
+  .perspective-1000 { perspective: 1000px; transform-style: preserve-3d; }
+
   /* Blob shapes behind illustrations */
   .blob {
     border-radius: 60% 40% 70% 30% / 50% 60% 40% 60%;
